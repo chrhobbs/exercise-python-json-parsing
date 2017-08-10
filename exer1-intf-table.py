@@ -1,17 +1,18 @@
 import json
 
-jsondata = open('exer1-interface-data.json').read()
+with open('exer1-interface-data.json', 'r') as jsondata:
+    interface_dict = json.load(jsondata)
 
-json_object = json.loads(jsondata)
-print(
-    "=======================================================================================" "\n"
-    "DN                                                 Description           Speed    MTU" "\n" 
-    "-------------------------------------------------- --------------------  ------  ------")
-imdata = json_object["imdata"]
-for i in imdata:
-        dn = i["l1PhysIf"]["attributes"]["dn"]
-        descr = i["l1PhysIf"]["attributes"]["descr"]
-        speed = i["l1PhysIf"]["attributes"]["speed"]
-        mtu = i["l1PhysIf"]["attributes"]["mtu"]
-        # print fields formatted in columns
-        print("{0:50} {1:20} {2:7} {3:6}".format(dn,descr,speed,mtu))
+imdata = interface_dict["imdata"]
+phys, attr = "l1PhysIf", "attributes"
+
+# List Comprehensions
+intfs = [(i[phys][attr]["dn"], i[phys][attr]["descr"], i[phys][attr]["speed"], i[phys][attr]["mtu"]) for i in imdata]
+
+print("=" * 90)
+template = "{0:50} {1:20} {2:7} {3:6}"
+print(template.format("DN", "Description", "Speed", "MTU"))
+print(template.format("-" * 50, "-" * 20, "-" * 7, "-" * 6))
+
+for i in intfs:
+    print(template.format(*i))
